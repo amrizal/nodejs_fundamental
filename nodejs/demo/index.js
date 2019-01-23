@@ -1,22 +1,27 @@
-var http = require('http');
-
 var connect = require('connect');
 
-var bodyParser = require('body-parser');
-
 var app = connect()
-	.use(bodyParser.urlencoded(
-		{extended:true}
-	))
-	.use(function(req, res){
-		var parsedInfo = {};
-		
-		parsedInfo.firstName = req.body.userFirstName;
-		parsedInfo.lastName = req.body.userLastName;
-		
-		res.end("User info parsed from form: " + parsedInfo.firstName + " " + parsedInfo.lastName);
-	});
+	.use(function(req,res){
+		if (req.url == "/hello"){
+			console.log("sending plain");
+			res.end("Hello from app");
+		}
+		else if (req.url == "/hello.json"){
+			console.log("sending json");
+			
+			var data = "HEllo";
+			var jsonData = JSON.stringify(data);
+			
+			res.setHeader('Content-Type', 'application/json');
+			res.end(jsonData);
+		}
+		else if (req.url == "/statusCodeDemo"){
+			console.log("sending 404 status code");
+			
+			res.statusCode = 404;
+			res.end("Oops, could not find something");
+		}
+	})
+	.listen(3456);
 	
-http.createServer(app).listen(3456);
-
 console.log("Listening on port 3456");
