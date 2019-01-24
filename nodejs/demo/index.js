@@ -1,27 +1,11 @@
-var connect = require('connect');
+var request = require('request');
 
-var app = connect()
-	.use(function(req,res){
-		if (req.url == "/hello"){
-			console.log("sending plain");
-			res.end("Hello from app");
-		}
-		else if (req.url == "/hello.json"){
-			console.log("sending json");
-			
-			var data = "HEllo";
-			var jsonData = JSON.stringify(data);
-			
-			res.setHeader('Content-Type', 'application/json');
-			res.end(jsonData);
-		}
-		else if (req.url == "/statusCodeDemo"){
-			console.log("sending 404 status code");
-			
-			res.statusCode = 404;
-			res.end("Oops, could not find something");
-		}
-	})
-	.listen(3456);
+request('http://www.google1.com', function(error, response, body){
+	if (!error && response.statusCode == 200){
+		console.log(body);
+	}
 	
-console.log("Listening on port 3456");
+	if (error){
+		console.log(error);
+	}
+});
