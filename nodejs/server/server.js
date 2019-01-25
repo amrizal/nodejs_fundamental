@@ -1,21 +1,32 @@
-var connect = require('connect');
+var express = require('express');
+var formidable = require('formidable');
+var app = express();
 
-var app = connect()
-	.use(function(req, res){
-		if (req.url == "/hello"){
-			console.log("sending plain");
-			res.end("Hello from app");
+app.use( function (req, res){
+	
+		if (req.method.toLowerCase() == "post"){
+			var form = new formidable.IncomingForm();
+			
+			//configure the form
+			form.uploadDir = __dirname + '\\uploads';
+			form.keepExtensions = true;
+			form.type = "multipart";
+			
+			form.parse (req, function (err, fields, files){
+				//parse fields
+				var firstName = fields.userFirstName;
+				var lastName = fields.userLastName;
+				console.log ("User info parsed from form: " + firstName + " " + lastName);
+				
+				res.writeHead (200, {'content-type': 'text/plain'});
+				res.end ("Form data received");
+			});
+			
+			return;
 		}
-		else if (req.url == "/printRequestHeaders"){
-			var headers = req.headers;
-			console.log("echoing headers");
-			console.log(headers);
-			res.end("Headers printed in console");
-		}
-		else{
-			res.end("Nothing else matched");
-		}
-	})
-	.listen(3456);
+});
 
-console.log("Listening to port 3456");
+//start server
+var port = 3456;
+app.listen (port);
+console.log ("Listening to port " + port + ", " + __dirname);

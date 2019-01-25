@@ -1,32 +1,29 @@
 var request = require('request');
 var fs = require('fs');
 
-request("http://localhost:3456/hello", function(error, response, body){
-	if (error){
-		console.log(error);
-	}
-	
-	//response.body
-	console.log (response.body);
-	
-	//get status code
-	console.log (response.statusCode);
-	
-	//see header
-	console.log (response.headers);
-})
-.pipe(fs.createWriteStream('DemoData/pipedFile.txt'));
-
-var options = {
-	 url:"http://localhost:3456/printRequestHeaders"
-	,headers:{'X-DEMO-HEADER':"myDemoHeader"}
+var data = {
+	 userFirstName :"John"
+	,userLastName :"Doe"
+	,myBuffer: new Buffer.alloc(1)//buffer for passing file data
+	,myFile: fs.createReadStream (__dirname + '/images/spinach.jpg')//read stream containing file data to pass
 }
 
-var callback = function(error, response, body){
-	if(error)
+//request.post ('http://localhost:3456').form (data);
+
+//request.post ('http://localhost:3456', {form:data});
+
+var callback = function (error, response, body){
+	if (error)
 		console.log(error);
 	else
 		console.log(body);
 }
 
-request(options, callback);
+//request.post ('http://localhost:3456', {form:data}, callback);
+
+request.post ('http://localhost:3456', {formData:data}, function optionalCallback (err, response, body){
+	if (err){
+		return console.error ('oops, therer was a problem uploading');
+	}
+	console.log ('File uploaded to server');
+});
